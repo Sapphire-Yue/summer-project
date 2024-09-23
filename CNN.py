@@ -1,34 +1,16 @@
 import tensorflow as tf
+import label_define as ld
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
 import numpy as np
 
-# 資料生成器，用於資料增強
-train_datagen = ImageDataGenerator(
-    rescale=1./255,
-    rotation_range=20,
-    width_shift_range=0.2,
-    height_shift_range=0.2,
-    horizontal_flip=True,
-    validation_split=0.2)  # 80% 用於訓練，20% 用於驗證
+train_generator = ld.train_generator
 
-train_generator = train_datagen.flow_from_directory(
-    'dataset',  # 資料集路徑
-    target_size=(64, 64),  # 圖片縮放至 64x64
-    batch_size=32,
-    class_mode='categorical',
-    subset='training')
+validation_generator = ld.validation_generator
 
-validation_generator = train_datagen.flow_from_directory(
-    'dataset',
-    target_size=(64, 64),
-    batch_size=32,
-    class_mode='categorical',
-    subset='validation')
-
-
+print(train_generator.class_indices)
 
 # 建立模型
 model = Sequential([
