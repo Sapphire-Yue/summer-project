@@ -56,7 +56,7 @@ class KeyBinds:
 
     class Toogle:
         neon = [pygame.KSCAN_N]
-        profiler = [pygame.K_F1]
+        profiler = [pygame.KSCAN_F1]
 
 
 _default_configs = {

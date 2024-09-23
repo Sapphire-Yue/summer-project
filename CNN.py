@@ -15,14 +15,14 @@ train_datagen = ImageDataGenerator(
     validation_split=0.2)  # 80% 用於訓練，20% 用於驗證
 
 train_generator = train_datagen.flow_from_directory(
-    'path/to/dataset',  # 資料集路徑
+    'dataset',  # 資料集路徑
     target_size=(64, 64),  # 圖片縮放至 64x64
     batch_size=32,
     class_mode='categorical',
     subset='training')
 
 validation_generator = train_datagen.flow_from_directory(
-    'path/to/dataset',
+    'dataset',
     target_size=(64, 64),
     batch_size=32,
     class_mode='categorical',
@@ -71,7 +71,7 @@ model.save('hand_gesture_model.h5')
 
 
 # 載入影像
-img = image.load_img('path/to/hand_image.jpg', target_size=(64, 64))
+img = image.load_img('hand_image.jpg', target_size=(64, 64))
 img_array = image.img_to_array(img) / 255.0  # 將影像轉為 numpy array 並標準化
 img_array = np.expand_dims(img_array, axis=0)  # 增加 batch 維度
 
