@@ -23,7 +23,7 @@ model = Sequential([
     Flatten(),
     Dense(128, activation='relu'),
     Dropout(0.5),  # Dropout 防止過擬合
-    Dense(5, activation='softmax')  # 最後輸出層，5 個手勢類別（根據具體數量調整）
+    Dense(6, activation='softmax')  # 最後輸出層，5 個手勢類別（根據具體數量調整）
 ])
 
 # 編譯模型
