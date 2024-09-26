@@ -52,12 +52,14 @@ print(f"Validation Accuracy: {validation_accuracy * 100:.2f}%")
 model.save('hand_gesture_model.h5')
 
 
-# 載入影像
-img = image.load_img('hand_image.jpg', target_size=(64, 64))
-img_array = image.img_to_array(img) / 255.0  # 將影像轉為 numpy array 並標準化
-img_array = np.expand_dims(img_array, axis=0)  # 增加 batch 維度
+# 預測12次
+for i in (12):
+    # 載入影像
+    img = image.load_img('hand_image'+ str(i) +'.jpg', target_size=(64, 64))
+    img_array = image.img_to_array(img) / 255.0  # 將影像轉為 numpy array 並標準化
+    img_array = np.expand_dims(img_array, axis=0)  # 增加 batch 維度
 
-# 進行預測
-predictions = model.predict(img_array)
-predicted_class = np.argmax(predictions)  # 取得類別索引
-print(f"Predicted class: {predicted_class}")
+    # 進行預測
+    predictions = model.predict(img_array)
+    predicted_class = np.argmax(predictions)  # 取得類別索引
+    print(f"Predicted class: {predicted_class}")
