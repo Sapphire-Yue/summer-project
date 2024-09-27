@@ -53,7 +53,7 @@ model.save('hand_gesture_model.h5')
 
 
 # 預測12次
-for i in (12):
+for i in range(12):
     # 載入影像
     img = image.load_img('hand_image'+ str(i) +'.jpg', target_size=(64, 64))
     img_array = image.img_to_array(img) / 255.0  # 將影像轉為 numpy array 並標準化
