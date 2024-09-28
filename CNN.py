@@ -1,6 +1,7 @@
 import tensorflow as tf
 import label_define as ld
 from tensorflow.keras.models import Sequential
+from tensorflow.keras import Input
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
@@ -17,20 +18,27 @@ class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right',
 
 # 建立模型
 model = Sequential([
-    Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 3)),
+    Input(shape=(64, 64, 3)),
+    Conv2D(32, (3, 3), activation='relu'),
+    Conv2D(32, (3, 3), activation='relu'),
     MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.2),  # Dropout 防止過擬合
+    Conv2D(64, (3, 3), activation='relu'),
     Conv2D(64, (3, 3), activation='relu'),
     MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.2),  # Dropout 防止過擬合
+    Conv2D(128, (3, 3), activation='relu'),
     Conv2D(128, (3, 3), activation='relu'),
     MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.2),  # Dropout 防止過擬合
     Flatten(),
     Dense(128, activation='relu'),
-    Dropout(0.5),  # Dropout 防止過擬合
+    Dense(128, activation='relu'),
     Dense(6, activation='softmax')  # 最後輸出層，5 個手勢類別（根據具體數量調整）
 ])
 
 # 編譯模型
-model.compile(optimizer='adam',
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
