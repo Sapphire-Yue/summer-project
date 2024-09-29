@@ -18,7 +18,7 @@ def preprocess_and_binarize(image):
     blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
     
     # Canny 邊緣檢測
-    edges = cv2.Canny(blurred_image, threshold1=50, threshold2=25)
+    edges = cv2.Canny(blurred_image, threshold1=150, threshold2=100)
     
     # 將邊緣圖像轉換為三通道圖像以便於輸出
     final_image = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB).astype(np.float32) / 255.0  # 將數據標準化到 [0, 1]
@@ -26,7 +26,7 @@ def preprocess_and_binarize(image):
     return final_image
 
     
-
+"""
 # 測試：加載圖片並進行預處理
 img = cv2.imread('dataset/down/Rdown_291.jpg')
 binarized_img = preprocess_and_binarize(img)
@@ -36,7 +36,7 @@ cv2.imshow('Original Image', img)
 cv2.imshow('Binarized Image', binarized_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
+"""
 
 """img = cv2.imread('dataset/down/Rdown_292.jpg')
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY); # 轉換前，都先將圖片轉換成灰階色彩

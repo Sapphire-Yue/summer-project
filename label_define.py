@@ -53,7 +53,7 @@ print(train_generator.class_indices)
 import matplotlib.pyplot as plt
 
 # 提取一批訓練數據
-images, labels = next(train_generator)
+images, labels = next(train_binarized_generator)
 
 # 顯示前 9 張圖片
 plt.figure(figsize=(10, 10))
