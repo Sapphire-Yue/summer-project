@@ -17,8 +17,9 @@ def preprocess_and_binarize(image):
             gray_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2
         )
         # 轉換為 3 通道來適應 CNN（即使是二值化的，還是需要 RGB 輸入形式）
-        binarized_image = cv2.cvtColor(binarized_image, cv2.COLOR_GRAY2RGB)
+        binarized_image = cv2.cvtColor(binarized_image, cv2.COLOR_GRAY2RGB).astype(np.float32) / 255.0  # 將數據標準化到 [0, 1]
         return binarized_image
+    
 """
 # 測試：加載圖片並進行預處理
 img = cv2.imread('dataset/down/Rdown_292.jpg')
