@@ -40,7 +40,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
 
 # 顯示模型架構
 model.summary()
-
+"""
 # 定義一個自訂的回調函數來顯示圖片
 class ImageDisplayCallback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
@@ -55,7 +55,7 @@ class ImageDisplayCallback(tf.keras.callbacks.Callback):
             plt.imshow(images[i])  # 顯示圖片
             plt.title(f"Predicted: {class_names[np.argmax(predictions[i])]}, True: {class_names[np.argmax(labels[i])]}")  # 顯示預測和真實標籤
             plt.axis('off')
-        plt.show()
+        plt.show()"""
 
 # 訓練模型
 history = model.fit(
@@ -63,8 +63,8 @@ history = model.fit(
     steps_per_epoch=ld.steps_per_epoch,
     validation_data=validation_generator,
     validation_steps=ld.validation_steps,
-    epochs=30,
-    callbacks=[ImageDisplayCallback()]  # 加入自訂回調函數
+    epochs=10,
+    #callbacks=[ImageDisplayCallback()]  # 加入自訂回調函數
 )
 
 """
@@ -89,7 +89,7 @@ history_finetune = model.fit(
 
 
 # 使用驗證集進行模型評估
-validation_loss, validation_accuracy = model.evaluate(validation_generator)
+validation_loss, validation_accuracy = model.evaluate(validation_generator, steps=ld.validation_steps)
 print(f"Validation Accuracy: {validation_accuracy * 100:.2f}%")
 
 # 儲存模型
