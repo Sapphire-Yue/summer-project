@@ -6,14 +6,14 @@ import tensorflow.keras as keras
 class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 替換成實際的手勢類別
 
 # 載入模型
-model = keras.models.load_model('hand_gesture_model.h5')
+model = keras.models.load_model('hand_gesture_resnet_model.h5')
 
 # 啟動攝像頭
 cap = cv2.VideoCapture(0)
 
 # 偵測的區域
 x_start, y_start = 100, 100  # 偵測區域的左上角座標
-width, height = 200, 200      # 偵測區域的寬度與高度
+width, height = 250, 250      # 偵測區域的寬度與高度
 
 while True:
     ret, frame = cap.read()
