@@ -8,10 +8,10 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import matplotlib.pyplot as plt
 
-train_generator = ld.train_generator
-validation_generator = ld.validation_generator
+train_generator = ld.train_binarized_generator
+validation_generator = ld.validation_binarized_generator
 
-print(train_generator.class_indices)
+print(ld.train_generator.class_indices)
 
 # 定義類別名稱
 class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
@@ -55,9 +55,9 @@ model.summary()
 # 訓練模型
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // train_generator.batch_size,
+    steps_per_epoch=ld.train_generator.samples // ld.train_generator.batch_size,
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // validation_generator.batch_size,
+    validation_steps=ld.validation_generator.samples // ld.validation_generator.batch_size,
     epochs=20)
 
 
