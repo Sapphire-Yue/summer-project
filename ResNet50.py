@@ -3,10 +3,12 @@ from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.regularizers import l2
 import label_define as ld
+import matplotlib.pyplot as plt
+import numpy as np
 
 # 使用定義的資料生成器
-train_generator = ld.train_generator
-validation_generator = ld.validation_generator
+train_generator = ld.train_binarized_generator
+validation_generator = ld.validation_binarized_generator
 
 # 定義類別名稱
 class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
@@ -39,13 +41,30 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
 # 顯示模型架構
 model.summary()
 
+# 定義一個自訂的回調函數來顯示圖片
+class ImageDisplayCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        # 獲取一些驗證數據
+        images, labels = next(iter(validation_generator))  # 取得第一個批次的驗證資料
+        predictions = self.model.predict(images)  # 預測結果
+        
+        # 繪製圖片及其預測
+        plt.figure(figsize=(10, 10))
+        for i in range(9):  # 顯示前 9 張圖片
+            plt.subplot(3, 3, i + 1)
+            plt.imshow(images[i])  # 顯示圖片
+            plt.title(f"Predicted: {class_names[np.argmax(predictions[i])]}, True: {class_names[np.argmax(labels[i])]}")  # 顯示預測和真實標籤
+            plt.axis('off')
+        plt.show()
+
 # 訓練模型
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // train_generator.batch_size,
+    steps_per_epoch=ld.steps_per_epoch,
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // validation_generator.batch_size,
-    epochs=30
+    validation_steps=ld.validation_steps,
+    epochs=30,
+    callbacks=[ImageDisplayCallback()]  # 加入自訂回調函數
 )
 
 """

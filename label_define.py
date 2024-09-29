@@ -4,11 +4,24 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
 import os
 
-# 創建圖片數據生成器，將預處理函數整合進去
+def custom_binarized_generator(generator):
+    """
+    Custom generator to apply binarization preprocessing to each batch of images.
+    :param generator: Original image generator
+    :return: Binarized images and labels
+    """
+    while True:
+        # Get a batch of images and labels
+        batch_x, batch_y = generator.next()
+        # Apply binarization preprocessing to each image in the batch
+        binarized_batch = np.array([preprocess_and_binarize(img) for img in batch_x])
+        yield binarized_batch, batch_y
+
+# Create an image data generator
 datagen = ImageDataGenerator(
-    rescale=1./255,  # 將像素值縮放至 [0, 1]
-    preprocessing_function=preprocess_and_binarize,  # 將二值化處理應用到每張圖片
-    validation_split=0.2  # 將數據集分為訓練集和驗證集
+    rescale=1./255,  # Scale images
+    #preprocessing_function=preprocess_and_binarize,  # Apply binarization preprocessing
+    validation_split=0.2  # Split into training/validation sets
 )
 
 # 載入訓練數據
@@ -29,8 +42,27 @@ validation_generator = datagen.flow_from_directory(
     subset='validation'  # 使用驗證集
 )
 
+steps_per_epoch=train_generator.samples // train_generator.batch_size
+validation_steps=validation_generator.samples // validation_generator.batch_size
+# Use custom binarized generator
+train_binarized_generator = custom_binarized_generator(train_generator)
+validation_binarized_generator = custom_binarized_generator(validation_generator)
 # 查看資料集中的分類標籤
 print(train_generator.class_indices)
+
+import matplotlib.pyplot as plt
+
+# 提取一批訓練數據
+images, labels = next(train_generator)
+
+# 顯示前 9 張圖片
+plt.figure(figsize=(10, 10))
+for i in range(16):
+    plt.subplot(4, 4, i + 1)
+    plt.imshow(images[i])  # 顯示圖片
+    plt.title(f"Class: {np.argmax(labels[i])}")  # 顯示對應的分類標籤
+    plt.axis('off')
+plt.show()
 
 
 """import numpy as np
