@@ -62,7 +62,7 @@ history = model.fit(
 
 
 # 使用驗證集進行模型評估
-validation_loss, validation_accuracy = model.evaluate(validation_generator)
+validation_loss, validation_accuracy = model.evaluate(validation_generator, steps=ld.validation_steps)
 print(f"Validation Accuracy: {validation_accuracy * 100:.2f}%")
 
 # 儲存模型
