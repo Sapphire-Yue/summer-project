@@ -12,8 +12,8 @@ model = keras.models.load_model('hand_gesture_model.h5')
 cap = cv2.VideoCapture(0)
 
 # 偵測的區域
-x_start, y_start = 100, 100  # 偵測區域的左上角座標
-width, height = 200, 200      # 偵測區域的寬度與高度
+x_start, y_start = 125, 125  # 偵測區域的左上角座標
+width, height = 175, 175      # 偵測區域的寬度與高度
 
 while True:
     ret, frame = cap.read()
@@ -31,14 +31,18 @@ while True:
     # 轉換為灰階影像
     gray_frame = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2GRAY)
 
-    # 使用高斯模糊降低雜訊
-    blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
+    # 雙邊濾波
+    blurred_image = cv2.bilateralFilter(gray_frame, d=9, sigmaColor=75, sigmaSpace=75)
 
     # 邊緣檢測
-    edges = cv2.Canny(blurred_frame, threshold1=50, threshold2=25)
+    edges = cv2.Canny(blurred_image, threshold1=50, threshold2=25)
+
+    # 增加線條粗細的膨脹操作
+    kernel = np.ones((3, 3), np.uint8)  # 3x3 核，增加邊緣粗細
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)  # 膨脹一次，可以調整 iterations 增加粗細
 
     # 調整大小以符合模型輸入
-    resized_edges = cv2.resize(edges, (64, 64))
+    resized_edges = cv2.resize(dilated_edges, (64, 64))
 
     # 將灰階影像轉換為 3 通道
     edges_rgb = cv2.cvtColor(resized_edges, cv2.COLOR_GRAY2RGB)  # 轉換為 (64, 64, 3)

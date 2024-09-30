@@ -19,15 +19,21 @@ def custom_binarized_generator(generator):
 
 # Create an image data generator
 datagen = ImageDataGenerator(
-    rescale=1./255,  # Scale images
+    rescale=1./255,          # 正規化
     #preprocessing_function=preprocess_and_binarize,  # Apply binarization preprocessing
+    width_shift_range=0.2,   # 隨機水平位移
+    height_shift_range=0.2,  # 隨機垂直位移
+    shear_range=0.2,         # 隨機剪切變換
+    zoom_range=0.2,          # 隨機縮放
+    horizontal_flip=True,    # 隨機水平翻轉
+    fill_mode='nearest',      # 空白區填補模式
     validation_split=0.2  # Split into training/validation sets
 )
 
 # 載入訓練數據
 train_generator = datagen.flow_from_directory(
-    'new_dataset/',  # 圖片資料夾
-    target_size=(64, 64),  # 圖片縮放至 64x64
+    'no_bg_dataset/',  # 圖片資料夾
+    target_size=(128, 128),  # 圖片縮放至 64x64
     batch_size=32,  # 批量大小
     class_mode='categorical',  # 多類別分類
     subset='training'  # 使用訓練集
@@ -35,8 +41,8 @@ train_generator = datagen.flow_from_directory(
 
 # 載入驗證數據
 validation_generator = datagen.flow_from_directory(
-    'new_dataset/',  # 圖片資料夾
-    target_size=(64, 64),  # 圖片縮放至 64x64
+    'no_bg_dataset/',  # 圖片資料夾
+    target_size=(128, 128),  # 圖片縮放至 64x64
     batch_size=32,  # 批量大小
     class_mode='categorical',  # 多類別分類
     subset='validation'  # 使用驗證集

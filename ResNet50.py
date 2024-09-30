@@ -28,8 +28,8 @@ base_model.trainable = False
 model = models.Sequential([
     base_model,
     layers.GlobalAveragePooling2D(),  # 全局平均池化，壓縮空間維度
-    layers.Dense(128, activation='relu', kernel_regularizer=l2(0.01)),  # 全連接層
-    layers.Dropout(0.2),  # Dropout 防止過擬合
+    layers.Dense(256, activation='relu', kernel_regularizer=l2(0.01)),  # 全連接層
+    layers.Dropout(0.3),  # Dropout 防止過擬合
     layers.Dense(num_classes, activation='softmax')  # 對應手勢分類數量的輸出層
 ])
 

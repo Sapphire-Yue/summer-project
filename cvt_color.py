@@ -14,14 +14,18 @@ def preprocess_and_binarize(image):
     # 轉換為灰度圖像
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    # 使用高斯模糊去除雜訊
-    blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
+    # 雙邊濾波
+    blurred_image = cv2.bilateralFilter(gray_image, d=9, sigmaColor=75, sigmaSpace=75)
     
     # Canny 邊緣檢測
     edges = cv2.Canny(blurred_image, threshold1=50, threshold2=25)
     
+    #膨脹操作，增加邊緣線條粗細
+    kernel = np.ones((3, 3), np.uint8)  # 定義膨脹的核大小，(3,3)表示線條變得更粗
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)  # `iterations`可以控制膨脹程度
+
     # 將邊緣圖像轉換為三通道圖像以便於輸出
-    final_image = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB).astype(np.float32) / 255.0  # 將數據標準化到 [0, 1]
+    final_image = cv2.cvtColor(dilated_edges, cv2.COLOR_GRAY2RGB).astype(np.float32) / 255.0  # 將數據標準化到 [0, 1]
     
     return final_image
 
