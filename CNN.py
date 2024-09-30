@@ -18,7 +18,7 @@ class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right',
 
 # 建立模型
 model = Sequential([
-    Input(shape=(64, 64, 3)),
+    Input(shape=(128, 128, 3)),
     Conv2D(32, (5, 5), activation='relu'),
     BatchNormalization(),
     Conv2D(32, (5, 5), activation='relu'),
