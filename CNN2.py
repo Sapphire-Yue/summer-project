@@ -14,7 +14,7 @@ validation_generator = ld.validation_binarized_generator
 print(ld.train_generator.class_indices)
 
 # 定義類別名稱
-class_names = ['Gesture down', 'Gesture left', 'Gesture right', 'Gesture up']  # 根據你的實際手勢數據
+class_names = ['Gesture down', 'Gesture left', 'Gesture right', 'Gesture up']  # Updated to 4 classes
 
 # 建立模型
 model = Sequential([
@@ -23,7 +23,7 @@ model = Sequential([
     BatchNormalization(),
     Conv2D(32, (5, 5), activation='relu'),
     MaxPooling2D(pool_size=(2, 2)),
-    Dropout(0.3),  # 加強 Dropout
+    Dropout(0.3),
 
     Conv2D(64, (3, 3), activation='relu'),
     BatchNormalization(),
@@ -39,8 +39,8 @@ model = Sequential([
 
     Flatten(),
     Dense(256, activation='relu'),
-    Dropout(0.4),  # 增加 Dropout 層的 dropout rate
-    Dense(4, activation='softmax')  # 最後輸出層，6 個手勢類別（根據具體數量調整）
+    Dropout(0.4),
+    Dense(4, activation='softmax')  # Updated to 4 classes
 ])
 
 # 編譯模型
@@ -51,15 +51,14 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
 # 顯示模型架構
 model.summary()
 
-
 # 訓練模型
 history = model.fit(
     train_generator,
     steps_per_epoch=ld.train_generator.samples // ld.train_generator.batch_size,
     validation_data=validation_generator,
     validation_steps=ld.validation_generator.samples // ld.validation_generator.batch_size,
-    epochs=20)
-
+    epochs=20
+)
 
 # 使用驗證集進行模型評估
 validation_loss, validation_accuracy = model.evaluate(validation_generator, steps=ld.validation_steps)
@@ -81,9 +80,9 @@ def plot_image(predicted_class, true_class, img):
 
 def plot_value_array(predictions, true_class):
     plt.grid(False)
-    plt.xticks(range(6))  # 假設6個類別
+    plt.xticks(range(4))  # Updated to 4 classes
     plt.yticks([])
-    thisplot = plt.bar(range(6), predictions, color="#777777")
+    thisplot = plt.bar(range(4), predictions, color="#777777")  # Updated to 4 classes
     plt.ylim([0, 1])
     predicted_class = np.argmax(predictions)
 
@@ -113,17 +112,3 @@ for i in range(20):  # 預測 20 張圖片
     plt.show()
 
     print(f"Predicted class: {class_names[predicted_class]} (True: {class_names[true_label]})")
-
-
-
-# # 預測12次
-# for i in range(12):
-#     # 載入影像
-#     img = image.load_img('hand_image'+ str(i) +'.jpg', target_size=(64, 64))
-#     img_array = image.img_to_array(img) / 255.0  # 將影像轉為 numpy array 並標準化
-#     img_array = np.expand_dims(img_array, axis=0)  # 增加 batch 維度
-
-#     # 進行預測
-#     predictions = model.predict(img_array)
-#     predicted_class = np.argmax(predictions)  # 取得類別索引
-#     print(f"Predicted class: {predicted_class}")
