@@ -6,7 +6,7 @@ import tensorflow.keras as keras
 class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 替換成實際的手勢類別
 
 # 載入模型
-model = keras.models.load_model('hand_gesture_resnet_model.h5')
+model = keras.models.load_model('hand_gesture_model.h5')
 
 # 啟動攝像頭
 cap = cv2.VideoCapture(0)
@@ -35,7 +35,7 @@ while True:
     blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
 
     # 邊緣檢測
-    edges = cv2.Canny(blurred_frame, threshold1=100, threshold2=50)
+    edges = cv2.Canny(blurred_frame, threshold1=50, threshold2=25)
 
     # 調整大小以符合模型輸入
     resized_edges = cv2.resize(edges, (64, 64))
