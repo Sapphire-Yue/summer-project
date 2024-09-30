@@ -42,7 +42,7 @@ while True:
     dilated_edges = cv2.dilate(edges, kernel, iterations=1)  # 膨脹一次，可以調整 iterations 增加粗細
 
     # 調整大小以符合模型輸入
-    resized_edges = cv2.resize(dilated_edges, (64, 64))
+    resized_edges = cv2.resize(dilated_edges, (128, 128))
 
     # 將灰階影像轉換為 3 通道
     edges_rgb = cv2.cvtColor(resized_edges, cv2.COLOR_GRAY2RGB)  # 轉換為 (64, 64, 3)
