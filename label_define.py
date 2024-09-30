@@ -44,6 +44,7 @@ validation_generator = datagen.flow_from_directory(
 
 steps_per_epoch=train_generator.samples // train_generator.batch_size
 validation_steps=validation_generator.samples // validation_generator.batch_size
+
 # Use custom binarized generator
 train_binarized_generator = custom_binarized_generator(train_generator)
 validation_binarized_generator = custom_binarized_generator(validation_generator)

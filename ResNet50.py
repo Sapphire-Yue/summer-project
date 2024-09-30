@@ -63,7 +63,7 @@ history = model.fit(
     steps_per_epoch=ld.steps_per_epoch,
     validation_data=validation_generator,
     validation_steps=ld.validation_steps,
-    epochs=10,
+    epochs=20,
     #callbacks=[ImageDisplayCallback()]  # 加入自訂回調函數
 )
 
