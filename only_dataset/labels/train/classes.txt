@@ -1,1 +1,6 @@
+down
+enter
+left
 right
+stop
+up
