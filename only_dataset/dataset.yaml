@@ -1,5 +1,5 @@
 train: /only_dataset/images/train
 val: /only_dataset/images/val
 
-nc: 6  # 类别数，上下左右4个类别
-names: ['down', 'enter', 'left', 'right', 'stop', 'up']  # 类别名称
+nc: 6  # 类别数
+names: ['down', 'enter', 'left', 'no', right', 'stop', 'up']  # 类别名称

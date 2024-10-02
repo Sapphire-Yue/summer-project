@@ -1,6 +1,7 @@
 down
 enter
 left
+no
 right
 stop
 up
