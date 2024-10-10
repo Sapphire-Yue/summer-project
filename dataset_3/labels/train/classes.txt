@@ -1,5 +1,0 @@
-stop
-up
-no
-left
-enter
