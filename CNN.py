@@ -14,7 +14,7 @@ validation_generator = ld.validation_binarized_generator
 print(ld.train_generator.class_indices)
 
 # 定義類別名稱
-class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
+class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture no', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
 
 # 建立模型
 model = Sequential([
@@ -40,7 +40,7 @@ model = Sequential([
     Flatten(),
     Dense(256, activation='relu'),
     Dropout(0.4),  # 增加 Dropout 層的 dropout rate
-    Dense(6, activation='softmax')  # 最後輸出層，6 個手勢類別（根據具體數量調整）
+    Dense(7, activation='softmax')  # 最後輸出層，7個手勢類別（根據具體數量調整）
 ])
 
 # 編譯模型

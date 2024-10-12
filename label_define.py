@@ -32,7 +32,7 @@ datagen = ImageDataGenerator(
 
 # 載入訓練數據
 train_generator = datagen.flow_from_directory(
-    'only_dataset/',  # 圖片資料夾
+    'dataset_7(CNN)/',  # 圖片資料夾
     target_size=(64, 64),  # 圖片縮放至 64x64
     batch_size=32,  # 批量大小
     class_mode='categorical',  # 多類別分類
@@ -41,7 +41,7 @@ train_generator = datagen.flow_from_directory(
 
 # 載入驗證數據
 validation_generator = datagen.flow_from_directory(
-    'only_dataset/',  # 圖片資料夾
+    'dataset_7(CNN)/',  # 圖片資料夾
     target_size=(64, 64),  # 圖片縮放至 64x64
     batch_size=32,  # 批量大小
     class_mode='categorical',  # 多類別分類
