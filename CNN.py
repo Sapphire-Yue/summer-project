@@ -8,8 +8,8 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import matplotlib.pyplot as plt
 
-train_generator = ld.train_binarized_generator
-validation_generator = ld.validation_binarized_generator
+train_generator = ld.train_generator
+validation_generator = ld.validation_generator
 
 print(ld.train_generator.class_indices)
 
