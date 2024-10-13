@@ -5,10 +5,9 @@ import time
 
 import util.fonts as fonts
 
-from yolo_gesture import YoloGesture
 
 class Player:
-    def __init__(self, x=0, y=0, z=0):
+    def __init__(self, gesture_detector, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -25,14 +24,14 @@ class Player:
         self._last_mode_before_death = None
         self._obstacle_that_killed_me = None
 
-        self.gesture_detector = YoloGesture()  # 確保正確使用類名稱
+        self.gesture_detector = gesture_detector  # 確保正確使用類名稱
 
     def set_mode(self, mode):
         if mode in self.modes and mode != self.current_mode:
             if mode == "dead":
                 self._dead_since = time.time()
                 self._last_mode_before_death = self.current_mode
-                self.gesture_detector.release()
+                # self.gesture_detector.release()
 
             self.current_mode = mode
 

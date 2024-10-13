@@ -9,7 +9,6 @@ from sound_manager.SoundManager import SoundManager
 import rendering.levelbuilder3d as levelbuilder3d
 import gameplay.highscores as highscores
 import util.utility_functions as utils
-from yolo_gesture import YoloGesture
 
 
 TARGET_FPS = config.Display.fps if not config.Debug.fps_test else -1
@@ -23,8 +22,7 @@ class GameLoop:
         self.screen = pygame.display.get_surface()
         self.current_mode = MainMenuMode(self)
         self.current_mode.on_mode_start()
-        # 初始化 YOLO 手勢辨識
-        self.gesture = YoloGesture()
+
     def set_mode(self, next_mode):
         if self.current_mode != next_mode:
             self.current_mode.on_mode_end()

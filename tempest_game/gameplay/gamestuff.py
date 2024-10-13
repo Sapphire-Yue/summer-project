@@ -16,9 +16,9 @@ from sound_manager.SoundManager import SoundManager
 
 class GameplayMode(main.GameMode):
 
-    def __init__(self, loop):
+    def __init__(self, loop, gesture_detector):
         super().__init__(loop)
-        self.player = player2d.Player()
+        self.player = player2d.Player(gesture_detector)
         self.current_level = levels.InfiniteGeneratingLevel(9)
 
         self.camera_min_y = -1  # camera y when player is grounded
@@ -40,11 +40,30 @@ class GameplayMode(main.GameMode):
         self.score_font = fonts.get_font(30, name="cool")
         self.update_level_rotation(1000, snap=True)
 
+        self.gesture_detector = gesture_detector  # 初始化 YoloGesture
+
+    def handle_gesture_actions(self, gesture_actions):
+        if gesture_actions:
+            for action in gesture_actions:
+                print(f"Detected gesture: {action}")
+                if action == "jump":
+                    self.player.jump()
+                elif action == "left":
+                    self.player.move_left()
+                elif action == "right":
+                    self.player.move_right()
+                elif action == "slide":
+                    self.player.slide()
+
     def on_mode_start(self):
         SoundManager.play_song('game_theme', fadeout_ms=250, fadein_ms=1000)
 
     def update(self, dt, events):
         self.handle_events(events)
+        # 獲取手勢動作
+        gesture_actions = self.gesture_detector.detect_gesture()
+        # 處理手勢動作
+        self.handle_gesture_actions(gesture_actions)
         self.player.update(dt, self.current_level, events)
 
         self.update_camera_position(dt)
@@ -55,15 +74,15 @@ class GameplayMode(main.GameMode):
         if self.player.is_dead():
             score = self.player.get_score()
             highscores.add_new_score(score)
-            self.loop.set_mode(RetryMenu(self.loop, score, self.player.get_death_message(), self))
+            self.loop.set_mode(RetryMenu(self.loop, score, self.player.get_death_message(), self.gesture_detector, self))
 
     def handle_events(self, events):
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key in keybinds.MENU_CANCEL:
-                    self.loop.set_mode(PauseMenu(self.loop, self))
+                    self.loop.set_mode(PauseMenu(self.loop, self, self.gesture_detector))
                 if e.key in keybinds.RESET:
-                    self.loop.set_mode(GameplayMode(self.loop))
+                    self.loop.set_mode(GameplayMode(self.loop, self.gesture_detector))
 
     def update_camera_position(self, dt):
         self.camera.position.z = self.player.z + self.camera_z_offset
@@ -133,7 +152,7 @@ class GameplayMode(main.GameMode):
 
 class PauseMenu(main.GameMode):
 
-    def __init__(self, loop, gameplay_mode: GameplayMode):
+    def __init__(self, loop, gameplay_mode: GameplayMode, gesture_detector):
         super().__init__(loop)
         self.selected_option_idx = 0
         self.gameplay_mode = gameplay_mode
@@ -146,6 +165,8 @@ class PauseMenu(main.GameMode):
         self.option_font = fonts.get_font(config.FontSize.option)
 
         self.pause_timer = 0  # how long we've been paused
+
+        self.gesture_detector = gesture_detector
 
     def on_mode_start(self):
         SoundManager.play('blip2')
@@ -177,7 +198,7 @@ class PauseMenu(main.GameMode):
 
     def exit_pressed(self):
         SoundManager.play('blip2')
-        self.loop.set_mode(main.MainMenuMode(self.loop))
+        self.loop.set_mode(main.MainMenuMode(self.loop, self.gesture_detector))
 
     def draw_to_screen(self, screen):
         # make the level underneath fade darker slightly after you've paused
@@ -209,14 +230,14 @@ class PauseMenu(main.GameMode):
 
 class RetryMenu(main.GameMode):
 
-    def __init__(self, loop, score, death_message, gameplay_mode: GameplayMode):
+    def __init__(self, loop, score, death_message, gesture_detector, gameplay_mode: GameplayMode):
         super().__init__(loop)
         self.score = score
         self.best_score = highscores.get_best()
         self.selected_option_idx = 0
         self.gameplay_mode = gameplay_mode
         self.options = [
-            ("retry", lambda: self.retry_pressed()),
+            ("retry", lambda: self.retry_pressed(gesture_detector)),
             ("exit", lambda: self.exit_pressed())
         ]
 
@@ -227,6 +248,7 @@ class RetryMenu(main.GameMode):
         self.death_message = death_message
 
         self.pause_timer = 0  # how long we've been paused
+        self.gesture_detector = gesture_detector
 
     def on_mode_start(self):
         SoundManager.set_song_volume_multiplier(0.5)
@@ -253,11 +275,11 @@ class RetryMenu(main.GameMode):
                     self.exit_pressed()
                     return
 
-    def retry_pressed(self):
-        self.loop.set_mode(GameplayMode(self.loop))
+    def retry_pressed(self, gesture_detector):
+        self.loop.set_mode(GameplayMode(self.loop, gesture_detector))
 
     def exit_pressed(self):
-        self.loop.set_mode(main.MainMenuMode(self.loop))
+        self.loop.set_mode(main.MainMenuMode(self.loop, self.gesture_detector))
 
     def draw_to_screen(self, screen):
         # make the level underneath fade darker slightly after you've paused

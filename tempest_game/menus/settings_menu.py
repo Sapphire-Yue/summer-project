@@ -10,7 +10,7 @@ from sound_manager.SoundManager import SoundManager
 
 class SettingsMenuMode(main.GameMode):
 
-    def __init__(self, loop: main.GameLoop):
+    def __init__(self, loop: main.GameLoop, gesture_detector):
         super().__init__(loop)
         self.selected_option_idx = 0
         self.options = [
@@ -23,6 +23,8 @@ class SettingsMenuMode(main.GameMode):
 
         self.title_font = fonts.get_font(config.FontSize.title)
         self.option_font = fonts.get_font(config.FontSize.option)
+
+        self.gesture_detector = gesture_detector
 
     def on_mode_start(self):
         SoundManager.play_song("menu_theme", fadein_ms=3000)
@@ -46,7 +48,7 @@ class SettingsMenuMode(main.GameMode):
         if old_resolution != new_resolution:
             main.create_or_recreate_window()
 
-        self.loop.set_mode(main.MainMenuMode(self.loop))
+        self.loop.set_mode(main.MainMenuMode(self.loop, self.gesture_detector))
 
     def update(self, dt, events):
         for e in events:

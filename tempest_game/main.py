@@ -18,13 +18,14 @@ TARGET_FPS = config.Display.fps if not config.Debug.fps_test else -1
 class GameLoop:
 
     def __init__(self):
+        # 初始化 YOLO 手勢辨識
+        self.gesture = YoloGesture()
         self.running = True
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.get_surface()
-        self.current_mode = MainMenuMode(self)
+        self.current_mode = MainMenuMode(self, self.gesture)
         self.current_mode.on_mode_start()
-        # 初始化 YOLO 手勢辨識
-        # self.gesture = YoloGesture()
+        
     def set_mode(self, next_mode):
         if self.current_mode != next_mode:
             self.current_mode.on_mode_end()
@@ -57,7 +58,7 @@ class GameLoop:
 
             # 處理手勢動作和事件
             # self.handle_game_actions(gesture_actions)
-
+            
             cur_mode = self.current_mode
             
             cur_mode.update(dt, events)
@@ -121,7 +122,7 @@ class GameMode:
 
 class MainMenuMode(GameMode):
 
-    def __init__(self, loop: GameLoop):
+    def __init__(self, loop: GameLoop, gesture_detector):
         super().__init__(loop)
         self.selected_option_idx = 0
         self.options = [
@@ -142,12 +143,14 @@ class MainMenuMode(GameMode):
         self.bg_camera = threedee.Camera3D()
         self.bg_renderer = neon.NeonRenderer()
 
+        self.gesture_detector = gesture_detector  # 初始化 YoloGesture
+
     def on_mode_start(self):
         SoundManager.play_song("menu_theme", fadein_ms=0)
 
     def start_pressed(self):
         import gameplay.gamestuff  # shh don't tell pylint about this
-        self.loop.set_mode(gameplay.gamestuff.GameplayMode(self.loop))
+        self.loop.set_mode(gameplay.gamestuff.GameplayMode(self.loop, self.gesture_detector))
 
     def help_pressed(self):
         import menus.help_menu as help_menu
@@ -155,7 +158,7 @@ class MainMenuMode(GameMode):
 
     def settings_pressed(self):
         import menus.settings_menu as settings_menu
-        self.loop.set_mode(settings_menu.SettingsMenuMode(self.loop))
+        self.loop.set_mode(settings_menu.SettingsMenuMode(self.loop, self.gesture_detector))
 
     def credits_pressed(self):
         import menus.credits_menu as credits_menu
@@ -163,6 +166,7 @@ class MainMenuMode(GameMode):
 
     def exit_pressed(self):
         self.loop.running = False
+        
 
     def update(self, dt, events):
         for e in events:
