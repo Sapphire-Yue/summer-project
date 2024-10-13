@@ -21,7 +21,7 @@ def preprocess_and_binarize(image):
     edges = cv2.Canny(blurred_image, threshold1=50, threshold2=25)
     
     #膨脹操作，增加邊緣線條粗細
-    kernel = np.ones((3, 3), np.uint8)  # 定義膨脹的核大小，(3,3)表示線條變得更粗
+    kernel = np.ones((1, 1), np.uint8)  # 定義膨脹的核大小，(3,3)表示線條變得更粗
     dilated_edges = cv2.dilate(edges, kernel, iterations=1)  # `iterations`可以控制膨脹程度
 
     # 將邊緣圖像轉換為三通道圖像以便於輸出
@@ -30,7 +30,7 @@ def preprocess_and_binarize(image):
     return final_image
 
     
-
+"""
 # 測試：加載圖片並進行預處理
 img = cv2.imread('no_bg_dataset/right/rp_right1_271.jpg')
 binarized_img = preprocess_and_binarize(img)
@@ -40,7 +40,7 @@ cv2.imshow('Original Image', img)
 cv2.imshow('Binarized Image', binarized_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
+"""
 
 """img = cv2.imread('dataset/down/Rdown_292.jpg')
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY); # 轉換前，都先將圖片轉換成灰階色彩

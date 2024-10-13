@@ -2,6 +2,8 @@ import pygame
 import json
 import pathlib
 import traceback
+import torch
+import cv2
 
 
 class Display:
@@ -115,8 +117,23 @@ _default_configs = {
             "neon": [pygame.K_n],
             "profiler": []
             }
+        },
+    "Gesture": {
+        "enabled": True,
+            "mapping": {
+            "jump": "up",
+            "left": "left",
+            "right": "right",
+            "slide": "down"
+            }
         }
     }
+
+# 初始化 YOLOv5 模型 (假設已經有自定義手勢辨識模型)
+model = torch.hub.load('ultralytics/yolov5', 'custom', path='path_to_your_trained_model.pt')
+
+# 初始化攝像頭
+cap = cv2.VideoCapture(0)
 
 
 def _apply_configs_from_json(configuration):
@@ -153,9 +170,35 @@ def _apply_configs_from_json(configuration):
     KeyBinds.Toogle.neon = configuration["KeyBinds"]["Toogle"]["neon"]
     KeyBinds.Toogle.profiler = configuration["KeyBinds"]["Toogle"]["profiler"]
 
+    # 手勢辨識配置
+    _default_configs["Gesture"]["enabled"] = configuration["Gesture"]["enabled"]
+    _default_configs["Gesture"]["mapping"] = configuration["Gesture"]["mapping"]
 
 _apply_configs_from_json(_default_configs)  # initialize configs to defaults
 
+# 載入手勢和鍵盤的事件處理
+def handle_game_actions(gesture_action):
+    keys = pygame.key.get_pressed()
+
+    # 鍵盤動作處理
+    if keys[pygame.K_w] or keys[pygame.K_UP] or keys[pygame.K_SPACE]:
+        print("Jump action (keyboard)")
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+        print("Left action (keyboard)")
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+        print("Right action (keyboard)")
+    if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+        print("Slide action (keyboard)")
+
+    # 手勢動作處理
+    if gesture_action == "jump":
+        print("Jump action (gesture)")
+    elif gesture_action == "left":
+        print("Left action (gesture)")
+    elif gesture_action == "right":
+        print("Right action (gesture)")
+    elif gesture_action == "slide":
+        print("Slide action (gesture)")
 
 def _get_configs_as_json_dict():
     configuration = json.loads(json.dumps(_default_configs))  # making a new copy
@@ -222,5 +265,3 @@ def save_configs_to_disk():
     except Exception:
         print("ERROR: failed to save configs to: {}".format(path))
         traceback.print_exc()
-
-

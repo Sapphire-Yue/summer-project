@@ -25,7 +25,7 @@ datagen = ImageDataGenerator(
     height_shift_range=0.2,  # 隨機垂直位移
     shear_range=0.2,         # 隨機剪切變換
     zoom_range=0.2,          # 隨機縮放
-    horizontal_flip=True,    # 隨機水平翻轉
+    #horizontal_flip=True,    # 隨機水平翻轉
     fill_mode='nearest',      # 空白區填補模式
     validation_split=0.2  # Split into training/validation sets
 )

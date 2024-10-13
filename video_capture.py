@@ -3,17 +3,17 @@ import numpy as np
 import tensorflow.keras as keras
 
 # 定義手勢類別名稱（根據你的模型訓練的手勢類別）
-class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 替換成實際的手勢類別
-
+#class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 替換成實際的手勢類別
+class_names = ['Gesture down', 'Gesture left', 'Gesture right', 'Gesture up']  # 替換成實際的手勢類別
 # 載入模型
-model = keras.models.load_model('hand_gesture_model.h5')
+model = keras.models.load_model('hand_gesture_resnet_model.h5')
 
 # 啟動攝像頭
 cap = cv2.VideoCapture(0)
 
 # 偵測的區域
 x_start, y_start = 125, 125  # 偵測區域的左上角座標
-width, height = 175, 175      # 偵測區域的寬度與高度
+width, height = 200, 200      # 偵測區域的寬度與高度
 
 while True:
     ret, frame = cap.read()
@@ -39,7 +39,7 @@ while True:
 
     # 增加線條粗細的膨脹操作
     kernel = np.ones((3, 3), np.uint8)  # 3x3 核，增加邊緣粗細
-    dilated_edges = cv2.dilate(edges, kernel, iterations=1)  # 膨脹一次，可以調整 iterations 增加粗細
+    dilated_edges = cv2.dilate(edges, kernel, iterations=2)  # 膨脹一次，可以調整 iterations 增加粗細
 
     # 調整大小以符合模型輸入
     resized_edges = cv2.resize(dilated_edges, (128, 128))

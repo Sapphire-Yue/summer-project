@@ -9,6 +9,7 @@ from sound_manager.SoundManager import SoundManager
 import rendering.levelbuilder3d as levelbuilder3d
 import gameplay.highscores as highscores
 import util.utility_functions as utils
+from yolo_gesture import YoloGesture
 
 
 TARGET_FPS = config.Display.fps if not config.Debug.fps_test else -1
@@ -22,7 +23,8 @@ class GameLoop:
         self.screen = pygame.display.get_surface()
         self.current_mode = MainMenuMode(self)
         self.current_mode.on_mode_start()
-
+        # 初始化 YOLO 手勢辨識
+        self.gesture = YoloGesture()
     def set_mode(self, next_mode):
         if self.current_mode != next_mode:
             self.current_mode.on_mode_end()
@@ -49,6 +51,13 @@ class GameLoop:
                         print("INFO: toggling neon to: {}".format(config.Debug.use_neon))
                     if e.key in keybinds.TOGGLE_PROFILER:
                         profiling.get_instance().toggle()
+            
+            # 呼叫 YOLO 手勢辨識
+            gesture_actions = self.gesture.detect_gesture()
+
+            # 處理手勢動作和事件
+            self.handle_game_actions(gesture_actions)
+            
             cur_mode = self.current_mode
 
             cur_mode.update(dt, events)
@@ -61,6 +70,33 @@ class GameLoop:
 
             dt = self.clock.tick(TARGET_FPS) / 1000.0
 
+    def handle_game_actions(self, gesture_actions):
+        keys = pygame.key.get_pressed()
+
+        # 鍵盤動作
+        if keys[pygame.K_w] or keys[pygame.K_UP] or keys[pygame.K_SPACE]:
+            print("Jump action (keyboard)")
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            print("Left action (keyboard)")
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            print("Right action (keyboard)")
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            print("Slide action (keyboard)")
+
+        # 手勢動作
+        if gesture_actions:
+            for action in gesture_actions:
+                if action == "jump":
+                    print("Jump action (gesture)")
+                elif action == "left":
+                    print("Left action (gesture)")
+                elif action == "right":
+                    print("Right action (gesture)")
+                elif action == "slide":
+                    print("Slide action (gesture)")
+
+    def __del__(self):
+        self.gesture.release()
 
 class GameMode:
 

@@ -11,7 +11,8 @@ train_generator = ld.train_binarized_generator
 validation_generator = ld.validation_binarized_generator
 
 # 定義類別名稱
-class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
+class_names = ['Gesture down', 'Gesture left', 'Gesture right', 'Gesture up']  # 根據你的實際手勢數據
+#class_names = ['Gesture down', 'Gesture enter', 'Gesture left', 'Gesture right', 'Gesture stop', 'Gesture up']  # 根據你的實際手勢數據
 num_classes = len(class_names)
 
 # 載入 ResNet50 作為基礎模型，使用預訓練權重並排除頂層分類器
