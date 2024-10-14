@@ -50,7 +50,7 @@ class SettingsMenuMode(main.GameMode):
 
         self.loop.set_mode(main.MainMenuMode(self.loop, self.gesture_detector))
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key in keybinds.MENU_UP:

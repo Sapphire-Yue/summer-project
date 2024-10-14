@@ -58,10 +58,10 @@ class GameplayMode(main.GameMode):
     def on_mode_start(self):
         SoundManager.play_song('game_theme', fadeout_ms=250, fadein_ms=1000)
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         self.handle_events(events)
         # 獲取手勢動作
-        gesture_actions = self.gesture_detector.detect_gesture()
+        #gesture_actions = self.gesture_detector.detect_gesture()
         # 處理手勢動作
         self.handle_gesture_actions(gesture_actions)
         self.player.update(dt, self.current_level, events)
@@ -175,8 +175,10 @@ class PauseMenu(main.GameMode):
     def on_mode_end(self):
         SoundManager.set_song_volume_multiplier(1.0)
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         self.pause_timer += dt
+
+        # 處理鍵盤事件
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key in keybinds.MENU_UP:
@@ -186,11 +188,27 @@ class PauseMenu(main.GameMode):
                     SoundManager.play('blip')
                     self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
                 elif e.key in keybinds.MENU_ACCEPT:
-                    self.options[self.selected_option_idx][1]()  # activate the option's lambda
+                    self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda 函數
                     return
                 elif e.key in keybinds.MENU_CANCEL:
                     self.continue_pressed()
                     return
+
+        # 處理手勢動作
+        if gesture_actions:  # 確保有手勢動作
+            if 'jump' in gesture_actions:
+                SoundManager.play('blip')
+                self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
+            elif 'slide' in gesture_actions:
+                SoundManager.play('blip')
+                self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
+            elif 'enter' in gesture_actions:
+                self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda 函數
+                return
+            elif 'stop' in gesture_actions:
+                self.continue_pressed()
+                return
+
 
     def continue_pressed(self):
         SoundManager.play('accept')
@@ -256,24 +274,47 @@ class RetryMenu(main.GameMode):
     def on_mode_end(self):
         SoundManager.set_song_volume_multiplier(1.0)
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         self.pause_timer += dt
+
+        # 處理鍵盤事件
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key in keybinds.MENU_UP and self.pause_timer > 0.5:
                     SoundManager.play('blip')
                     self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
+                    self.pause_timer = 0  # 重置計時器
                 elif e.key in keybinds.MENU_DOWN and self.pause_timer > 0.5:
                     SoundManager.play('blip')
                     self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
+                    self.pause_timer = 0  # 重置計時器
                 elif e.key in keybinds.MENU_ACCEPT:
                     SoundManager.play('accept')
-                    self.options[self.selected_option_idx][1]()  # activate the option's lambda
+                    self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda
                     return
                 elif e.key in keybinds.MENU_CANCEL:
                     SoundManager.play('blip2')
                     self.exit_pressed()
                     return
+
+        # 處理手勢動作
+        if gesture_actions:
+            if 'jump' in gesture_actions and self.pause_timer > 0.5:
+                SoundManager.play('blip')
+                self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
+                self.pause_timer = 0  # 重置計時器
+            elif 'slide' in gesture_actions and self.pause_timer > 0.5:
+                SoundManager.play('blip')
+                self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
+                self.pause_timer = 0  # 重置計時器
+            elif 'enter' in gesture_actions:
+                SoundManager.play('accept')
+                self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda
+                return
+            elif 'stop' in gesture_actions:
+                SoundManager.play('blip2')
+                self.exit_pressed()
+                return
 
     def retry_pressed(self, gesture_detector):
         self.loop.set_mode(GameplayMode(self.loop, gesture_detector))

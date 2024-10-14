@@ -58,7 +58,7 @@ class HelpMenuMode(GameMode):
     def exit_pressed(self):
         self.loop.set_mode(self.prev_menu)
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         for i in self.squares:
             i[2] += i[3] * dt * 100
             i[1] -= abs(i[3]) * dt  * 100

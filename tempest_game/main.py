@@ -53,15 +53,14 @@ class GameLoop:
                     if e.key in keybinds.TOGGLE_PROFILER:
                         profiling.get_instance().toggle()
             
-            # 呼叫 YOLO 手勢辨識
-            # gesture_actions = self.gesture.detect_gesture()
+            
 
             # 處理手勢動作和事件
             # self.handle_game_actions(gesture_actions)
             
             cur_mode = self.current_mode
-            
-            cur_mode.update(dt, events)
+            gesture_actions = self.gesture.detect_gesture()
+            cur_mode.update(dt, events, gesture_actions)
             cur_mode.draw_to_screen(self.screen)
 
             pygame.display.flip()
@@ -70,32 +69,6 @@ class GameLoop:
                 pygame.display.set_caption(f"{config.Display.title} {int(self.clock.get_fps())} FPS")
 
             dt = self.clock.tick(TARGET_FPS) / 1000.0
-    """
-    def handle_game_actions(self, gesture_actions):
-        keys = pygame.key.get_pressed()
-
-        # 鍵盤動作
-        if keys[pygame.K_w] or keys[pygame.K_UP] or keys[pygame.K_SPACE]:
-            print("Jump action (keyboard)")
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            print("Left action (keyboard)")
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            print("Right action (keyboard)")
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            print("Slide action (keyboard)")
-
-        # 手勢動作
-        if gesture_actions:
-            for action in gesture_actions:
-                print(f"Detected gesture: {action}")
-                if action == "jump":
-                    print("Jump action (gesture)")
-                elif action == "left":
-                    print("Left action (gesture)")
-                elif action == "right":
-                    print("Right action (gesture)")
-                elif action == "slide":
-                    print("Slide action (gesture)")"""
 
     def __del__(self):
         self.gesture.release()
@@ -113,7 +86,7 @@ class GameMode:
         """Called when mode becomes inactive"""
         pass
 
-    def update(self, dt, events):
+    def update(self, dt, events, gesture_actions=None):
         pass
 
     def draw_to_screen(self, screen):
@@ -168,9 +141,10 @@ class MainMenuMode(GameMode):
         self.loop.running = False
         
 
-    def update(self, dt, events):
-        for e in events:
-            if e.type == pygame.KEYDOWN:
+    def update(self, dt, events, gesture_actions=None):
+        for e in (events or []) + (gesture_actions or []):
+            # 鍵盤事件處理
+            if isinstance(e, pygame.event.Event) and e.type == pygame.KEYDOWN:
                 if e.key in keybinds.MENU_UP:
                     SoundManager.play("blip")
                     self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
@@ -182,6 +156,23 @@ class MainMenuMode(GameMode):
                     self.options[self.selected_option_idx][1]()  # activate the option's lambda
                     return
                 elif e.key in keybinds.MENU_CANCEL:
+                    SoundManager.play("blip2")
+                    self.exit_pressed()
+                    return
+
+            # 手勢動作處理
+            elif isinstance(e, str):  # 假設手勢動作是字符串
+                if e == "jump":
+                    SoundManager.play("blip")
+                    self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
+                elif e == "slide":
+                    SoundManager.play("blip")
+                    self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
+                elif e == "enter":
+                    SoundManager.play("accept")
+                    self.options[self.selected_option_idx][1]()  # activate the option's lambda
+                    return
+                elif e == "stop":
                     SoundManager.play("blip2")
                     self.exit_pressed()
                     return
