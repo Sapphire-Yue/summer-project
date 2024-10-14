@@ -264,7 +264,7 @@ class Level:
 class GenerationParameters:
 
     def __init__(self):
-        self.cell_length = 20     # how far apart obstacles are
+        self.cell_length = 40     # how far apart obstacles are
         self.speeds = [(0, 60),   # at z = [0], the speed will be [1]. In between, values are interpolated linearly.
                        (3000, 90),
                        (10000, 120),   # 120 is very fast but still playable

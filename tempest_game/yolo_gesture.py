@@ -10,7 +10,7 @@ class YoloGesture:
 
     def __init__(self):
         # 載入 YOLOv5 模型，假設你已經有一個訓練好的手勢辨識模型
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='E:/Python/pygame-summer-team-jam-main/best.pt')
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='C:/School-Project-Team/summer-project/exp19/weights/best.pt')
         self.enabled = config._default_configs["Gesture"]["enabled"]
         # 檢查手勢映射
         """self.mapping = config._default_configs["Gesture"]["mapping"]
@@ -28,7 +28,7 @@ class YoloGesture:
 
         # 設置計時器
         self.last_detection_time = time.time()  # 用來記錄上一次偵測的時間
-        self.detection_interval = 0.2  # 設定每 0.3 秒回傳一次動作
+        self.detection_interval = 0.3  # 設定每 0.3 秒回傳一次動作
 
     def detect_gesture(self):
         if not self.enabled:
