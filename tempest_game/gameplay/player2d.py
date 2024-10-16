@@ -7,7 +7,7 @@ import util.fonts as fonts
 
 
 class Player:
-    def __init__(self, gesture_detector, x=0, y=0, z=0):
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -23,8 +23,6 @@ class Player:
         self._dead_since = 0  # time of death, in seconds since epoch
         self._last_mode_before_death = None
         self._obstacle_that_killed_me = None
-
-        self.gesture_detector = gesture_detector  # 確保正確使用類名稱
 
     def set_mode(self, mode):
         if mode in self.modes and mode != self.current_mode:
@@ -123,17 +121,16 @@ class Player:
     def get_score(self):
         return int(self.z / 10) * 10
 
-    # 添加手勢辨識選項
-    def update(self, dt, level, events, gesture_actions=None):
+    
+    def update(self, dt, level, events):
         pressed = pygame.key.get_pressed()
-        gesture_actions = self.gesture_detector.detect_gesture()  # 手勢檢測
-        self._handle_inputs(events, pressed, gesture_actions)
+        self._handle_inputs(events, pressed)
         self._handle_collisions(level)
         if not self.is_dead():
             self.set_speed(level.get_player_speed(self.z))
             self._handle_movement(dt, pressed)
 
-    def _handle_inputs(self, events, pressed, gesture_actions):
+    def _handle_inputs(self, events, pressed):
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key in keybinds.JUMP:
@@ -146,22 +143,9 @@ class Player:
                     self.slide()
             elif e.type == pygame.KEYUP:
                 if e.key in keybinds.SLIDE and self.is_sliding():
-                    self.run()
-
+                    self.run()                
         if any(pressed[k] for k in keybinds.SLIDE):
             self.slide()
-        
-        # 處理手勢輸入
-        if gesture_actions:
-            for action in gesture_actions:
-                if action == "jump":
-                    self.jump()
-                elif action == "left":
-                    self.move_left()
-                elif action == "right":
-                    self.move_right()
-                elif action == "slide":
-                    self.slide()
 
     def _handle_movement(self, dt, pressed):
         if self.y > 0 or self.dy != 0:

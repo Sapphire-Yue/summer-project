@@ -129,7 +129,7 @@ _default_configs = {
         }
     }
 
-# 初始化 YOLOv5 模型 (假設已經有自定義手勢辨識模型)
+# 初始化模型
 model = torch.hub.load('ultralytics/yolov5', 'custom', path='C:/School-Project-Team/summer-project/exp19/weights/best.pt')
 
 # 初始化攝像頭

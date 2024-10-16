@@ -10,7 +10,7 @@ from sound_manager.SoundManager import SoundManager
 
 class SettingsMenuMode(main.GameMode):
 
-    def __init__(self, loop: main.GameLoop, gesture_detector):
+    def __init__(self, loop: main.GameLoop):
         super().__init__(loop)
         self.selected_option_idx = 0
         self.options = [
@@ -23,8 +23,6 @@ class SettingsMenuMode(main.GameMode):
 
         self.title_font = fonts.get_font(config.FontSize.title)
         self.option_font = fonts.get_font(config.FontSize.option)
-
-        self.gesture_detector = gesture_detector
 
     def on_mode_start(self):
         SoundManager.play_song("menu_theme", fadein_ms=3000)

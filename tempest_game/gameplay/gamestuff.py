@@ -18,7 +18,7 @@ class GameplayMode(main.GameMode):
 
     def __init__(self, loop, gesture_detector):
         super().__init__(loop)
-        self.player = player2d.Player(gesture_detector)
+        self.player = player2d.Player()
         self.current_level = levels.InfiniteGeneratingLevel(9)
 
         self.camera_min_y = -1  # camera y when player is grounded
@@ -40,12 +40,13 @@ class GameplayMode(main.GameMode):
         self.score_font = fonts.get_font(30, name="cool")
         self.update_level_rotation(1000, snap=True)
 
-        self.gesture_detector = gesture_detector  # 初始化 YoloGesture
-
+        self.gesture_detector = gesture_detector
+    
+    # 依手勢辨識結果執行動作
     def handle_gesture_actions(self, gesture_actions):
+        slide_detected = False  # 滑行型態
         if gesture_actions:
             for action in gesture_actions:
-                print(f"Detected gesture: {action}")
                 if action == "jump":
                     self.player.jump()
                 elif action == "left":
@@ -54,14 +55,17 @@ class GameplayMode(main.GameMode):
                     self.player.move_right()
                 elif action == "slide":
                     self.player.slide()
+                    slide_detected = True  # 偵測到滑行手勢
+
+            # 本次手勢偵測不為 slide 動作，恢復為跑步型態
+            if not slide_detected and self.player.is_sliding():
+                self.player.run()
 
     def on_mode_start(self):
         SoundManager.play_song('game_theme', fadeout_ms=250, fadein_ms=1000)
 
     def update(self, dt, events, gesture_actions=None):
         self.handle_events(events)
-        # 獲取手勢動作
-        #gesture_actions = self.gesture_detector.detect_gesture()
         # 處理手勢動作
         self.handle_gesture_actions(gesture_actions)
         self.player.update(dt, self.current_level, events)
@@ -188,14 +192,14 @@ class PauseMenu(main.GameMode):
                     SoundManager.play('blip')
                     self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
                 elif e.key in keybinds.MENU_ACCEPT:
-                    self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda 函數
+                    self.options[self.selected_option_idx][1]()
                     return
                 elif e.key in keybinds.MENU_CANCEL:
                     self.continue_pressed()
                     return
 
         # 處理手勢動作
-        if gesture_actions:  # 確保有手勢動作
+        if gesture_actions:
             if 'jump' in gesture_actions:
                 SoundManager.play('blip')
                 self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
@@ -203,7 +207,7 @@ class PauseMenu(main.GameMode):
                 SoundManager.play('blip')
                 self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
             elif 'enter' in gesture_actions:
-                self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda 函數
+                self.options[self.selected_option_idx][1]()
                 return
             elif 'stop' in gesture_actions:
                 self.continue_pressed()
@@ -290,7 +294,7 @@ class RetryMenu(main.GameMode):
                     self.pause_timer = 0  # 重置計時器
                 elif e.key in keybinds.MENU_ACCEPT:
                     SoundManager.play('accept')
-                    self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda
+                    self.options[self.selected_option_idx][1]()
                     return
                 elif e.key in keybinds.MENU_CANCEL:
                     SoundManager.play('blip2')
@@ -309,7 +313,7 @@ class RetryMenu(main.GameMode):
                 self.pause_timer = 0  # 重置計時器
             elif 'enter' in gesture_actions:
                 SoundManager.play('accept')
-                self.options[self.selected_option_idx][1]()  # 啟動選項的 lambda
+                self.options[self.selected_option_idx][1]()
                 return
             elif 'stop' in gesture_actions:
                 SoundManager.play('blip2')

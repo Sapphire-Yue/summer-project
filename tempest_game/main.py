@@ -18,7 +18,7 @@ TARGET_FPS = config.Display.fps if not config.Debug.fps_test else -1
 class GameLoop:
 
     def __init__(self):
-        # 初始化 YOLO 手勢辨識
+        # 初始化手勢辨識
         self.gesture = YoloGesture()
         self.running = True
         self.clock = pygame.time.Clock()
@@ -53,13 +53,8 @@ class GameLoop:
                     if e.key in keybinds.TOGGLE_PROFILER:
                         profiling.get_instance().toggle()
             
-            
-
-            # 處理手勢動作和事件
-            # self.handle_game_actions(gesture_actions)
-            
             cur_mode = self.current_mode
-            gesture_actions = self.gesture.detect_gesture()
+            gesture_actions = self.gesture.detect_gesture() # 手勢辨識偵測呼叫
             cur_mode.update(dt, events, gesture_actions)
             cur_mode.draw_to_screen(self.screen)
 
@@ -116,7 +111,7 @@ class MainMenuMode(GameMode):
         self.bg_camera = threedee.Camera3D()
         self.bg_renderer = neon.NeonRenderer()
 
-        self.gesture_detector = gesture_detector  # 初始化 YoloGesture
+        self.gesture_detector = gesture_detector  # 初始化手勢即時辨識器
 
     def on_mode_start(self):
         SoundManager.play_song("menu_theme", fadein_ms=0)
@@ -131,7 +126,7 @@ class MainMenuMode(GameMode):
 
     def settings_pressed(self):
         import menus.settings_menu as settings_menu
-        self.loop.set_mode(settings_menu.SettingsMenuMode(self.loop, self.gesture_detector))
+        self.loop.set_mode(settings_menu.SettingsMenuMode(self.loop))
 
     def credits_pressed(self):
         import menus.credits_menu as credits_menu
@@ -161,7 +156,7 @@ class MainMenuMode(GameMode):
                     return
 
             # 手勢動作處理
-            elif isinstance(e, str):  # 假設手勢動作是字符串
+            elif isinstance(e, str):
                 if e == "jump":
                     SoundManager.play("blip")
                     self.selected_option_idx = (self.selected_option_idx - 1) % len(self.options)
@@ -170,7 +165,7 @@ class MainMenuMode(GameMode):
                     self.selected_option_idx = (self.selected_option_idx + 1) % len(self.options)
                 elif e == "enter":
                     SoundManager.play("accept")
-                    self.options[self.selected_option_idx][1]()  # activate the option's lambda
+                    self.options[self.selected_option_idx][1]()
                     return
                 elif e == "stop":
                     SoundManager.play("blip2")
