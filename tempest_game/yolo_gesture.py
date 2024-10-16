@@ -19,7 +19,8 @@ class YoloGesture:
             "right'": "right",
             "down": "slide",
             "enter": "enter",
-            "stop": "stop"
+            "stop": "stop",
+            "no": "no"
         }
         # 開啟攝像頭
         self.cap = cv2.VideoCapture(0)
